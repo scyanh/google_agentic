@@ -1,0 +1,36 @@
+{
+  "name": "loan",
+  "url": "http://localhost:8000/a2a/loan",
+  "description": "Agent that can report about loans accounts and process loan approval applications",
+  "version": "1.0.1",
+  "defaultInputModes": ["text/plain"],
+  "defaultOutputModes": ["text/plain"],
+  "capabilities": {
+    "streaming": false,
+    "functions": true
+  },
+  "skills": [
+    {
+      "id": "loan_info",
+      "name": "Loan Information",
+      "description": "Get information about an existing loan account, monthly payments, and payment dates",
+      "tags": ["Loan", "Balance"],
+      "examples": [
+        "How much do I still owe on my personal loan?",
+        "When is my next auto payment due?",
+        "Do I have any outstanding loans?"
+      ]
+    },
+    {
+      "id": "loan_approval",
+      "name": "Loan Approval Application",
+      "description": "Apply for a new loan and receive approval determination",
+      "tags": ["Loan", "Approval", "Application"],
+      "examples": [
+        "Can I get $100 for bubble gum?",
+        "Hey, I think I can get a good deal on a car for $10,000. Can I borrow that much?",
+        "I'd like to get a $700 loan for an off-road 4x4"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,250 @@
+
+========================================
+Thread ID: thread-001
+URL: http://localhost:8000/a2a/manager
+========================================
+
+Prompt:
+ What is my current balance on the vacation account?
+
+Response:
+ The current balance on your Vacation Account is $1,500.00.
+
+Is there anything else I can help you with today?
+
+
+========================================
+Thread ID: thread-002
+URL: http://localhost:8000/a2a/manager
+========================================
+
+Prompt:
+ What is my current balance?
+
+Response:
+ Of course. I can get you the current balance, I just need to know which account you'd like to see. For example, you could say "show me the balance for my primary account." I can also list the accounts you have on deposit.
+
+-----
+
+Prompt:
+ My primary account
+
+Response:
+ Here is the current balance for your Primary Account:
+
+**Primary Account**
+
+*   **Balance:** $5,230.50
+
+Is there anything else I can help you with today?
+
+
+========================================
+Thread ID: thread-003
+URL: http://localhost:8000/a2a/manager
+========================================
+
+Prompt:
+ How much do I have on deposit?
+
+Response:
+ For security reasons, I cannot provide a total balance for all of your accounts. However, I can give you the balance for a specific account, such as your primary or vacation account. Which account would you like to check?
+
+
+========================================
+Thread ID: thread-004
+URL: http://localhost:8000/a2a/manager
+========================================
+
+Prompt:
+ What was my most recent payment on my main account?
+
+Response:
+ Your most recent payment on your main account was for $15.25 for Coffee on September 13, 2025.
+
+
+========================================
+Thread ID: thread-005
+URL: http://localhost:8000/a2a/manager
+========================================
+
+Prompt:
+ How much did I pay the hotel on vacation?
+
+Response:
+ Of course! I can help with that. I see a payment to a hotel for $200.00 on September 11, 2025 from your vacation account. Is there anything else I can help you with?
+
+
+========================================
+Thread ID: thread-006
+URL: http://localhost:8000/a2a/manager
+========================================
+
+Prompt:
+ Add $1000 to my vacation account.
+
+Response:
+ As a deposit account agent, I can only provide account information and transaction histories. I cannot add or transfer funds.
+
+
+========================================
+Thread ID: thread-007
+URL: http://localhost:8000/a2a/manager
+========================================
+
+Prompt:
+ Can I get $100 for bubble gum?
+
+Response:
+ Thank you for your patience while we reviewed your loan application.
+
+After careful consideration of your request, we are unable to approve the loan at this time. Our decision is based on a number of factors we evaluate for every application.
+
+We appreciate your business and thank you for considering us for your borrowing needs.
+
+-----
+
+Prompt:
+ In that case, can I get $10000?
+
+Response:
+ Certainly. What would the $10,000 be for?
+
+
+========================================
+Thread ID: thread-008
+URL: http://localhost:8000/a2a/manager
+========================================
+
+Prompt:
+ I'd like to get a $700 loan
+
+Response:
+ What is the loan for?
+
+-----
+
+Prompt:
+ I want to buy an off-road 4x4 and my buddy can get a good deal on one.
+
+Response:
+ Thank you for your patience while we reviewed your application.
+
+Based on the information we have gathered, we are pleased to inform you that your loan application has been approved. A loan officer will be in contact with you shortly to finalize the details and complete the process.
+
+We appreciate your business.
+
+
+========================================
+Thread ID: thread-009
+URL: http://localhost:8000/a2a/manager
+========================================
+
+Prompt:
+ I'm looking to buy a new house for about $500,000
+
+Response:
+ Thank you for working with us and providing the information needed for your loan application.
+
+After a careful evaluation based on our current lending guidelines, I'm afraid we are not able to approve your loan application at this time.
+
+We value your business and appreciate you considering us for your financing needs. If you have any general questions, please let me know.
+
+
+========================================
+Thread ID: thread-010
+URL: http://localhost:8000/a2a/manager
+========================================
+
+Prompt:
+ Hey, I think I can get a good deal on a car for $10,000. Can I borrow that much?
+
+Response:
+ Hello,
+
+Thank you for your patience while we reviewed your application.
+
+Based on the information we have, we are pleased to inform you that your request for a $10,000 auto loan has been approved.
+
+A loan officer will be in contact with you shortly to finalize the details and complete the process.
+
+We appreciate your business.
+
+
+========================================
+Thread ID: thread-011
+URL: http://localhost:8000/a2a/manager
+========================================
+
+Prompt:
+ When is my next auto payment due?
+
+Response:
+ Hello! I've looked up your auto loan and your next payment is due on **October 1, 2025**.
+
+Here are some more details about your loan:
+
+*   **Outstanding Balance:** $12,024.04
+*   **Monthly Payment:** $471.78
+
+Is there anything else I can help you with today?
+
+
+
+========================================
+Thread ID: thread-012
+URL: http://localhost:8000/a2a/manager
+========================================
+
+Prompt:
+ How much do I still owe on my personal loan?
+
+Response:
+ Of course! I can help you with that. Your personal loan has an outstanding balance of $10,159.25. The monthly payment is $359.19, and your next payment is due on October 15, 2025. This was originally a 48-month loan that started on May 20, 2024.
+
+
+========================================
+Thread ID: thread-013
+URL: http://localhost:8000/a2a/manager
+========================================
+
+Prompt:
+ Do I have any outstanding loans?
+
+Response:
+ Of course! I can help with that. It looks like you have one outstanding loan with us. Here are the details:
+
+### **Personal Loan**
+
+*   **Loan Amount:** $25,000.00
+*   **Outstanding Balance:** $12,024.04
+*   **Monthly Payment:** $471.78
+*   **Origination Date:** January 15, 2023
+*   **Next Payment Date:** October 1, 2025
+
+Please let me know if you have any other questions
+
+
+========================================
+Thread ID: thread-014
+URL: http://localhost:8000/a2a/manager
+========================================
+
+Prompt:
+ Give me a summary of my financial situation.
+
+Response:
+ I can help you with that! To give you the best summary, would you like to review your deposit accounts (like checking and savings) or your loan accounts first?
+
+
+========================================
+Thread ID: thread-015
+URL: http://localhost:8000/a2a/manager
+========================================
+
+Prompt:
+ What is the total balance across all my accounts and what loans do I have?
+
+Response:
+ I can help with both of those requests. Would you like to review your deposit accounts or your loan accounts first?
+

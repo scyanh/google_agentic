@@ -1,0 +1,34 @@
+{
+  "name": "deposit",
+  "url": "http://localhost:8000/a2a/deposit",
+  "description": "Agent that can report about deposit accounts",
+  "version": "1.0.1",
+  "defaultInputModes": ["text/plain"],
+  "defaultOutputModes": ["text/plain"],
+  "capabilities": {
+    "streaming": false,
+    "functions": true
+  },
+  "skills": [
+    {
+      "id": "balance",
+      "name": "Deposit Balance",
+      "description": "Get the balance and transaction history on a specific deposit account",
+      "tags": ["Balance", "Deposit"],
+      "examples": [
+        "What is my current balance?",
+        "What is my balance on the vacation account?",
+        "What was my most recent payment on my main account?"
+      ]
+    },
+    {
+      "id": "check_minimum_balance",
+      "name": "Check Minimum Balance",
+      "description": "Checks whether the total balance of all deposit accounts meets a minimum threshold",
+      "tags": ["Equity", "Verification"],
+      "examples": [
+        "Is the total balance of all my deposit accounts greater than 5000?"
+      ]
+    }
+  ]
+}

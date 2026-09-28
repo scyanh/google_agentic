@@ -1,0 +1,36 @@
+{
+  "name": "manager",
+  "url": "http://localhost:8000/a2a/manager",
+  "description": "Central bank manager agent that answers general bank inquiries and routes account-specific requests to deposit and loan agents via A2A.",
+  "version": "1.0.1",
+  "defaultInputModes": ["text/plain"],
+  "defaultOutputModes": ["text/plain"],
+  "capabilities": {
+    "streaming": false,
+    "functions": true
+  },
+  "skills": [
+    {
+      "id": "bank_info",
+      "name": "General Bank Information",
+      "description": "Answer customer questions regarding bank operating hours, branches, contact channels, and available financial services.",
+      "tags": ["Bank Information", "General FAQ", "Hours"],
+      "examples": [
+        "What are your business hours?",
+        "How can I contact customer support?",
+        "What types of accounts do you offer?"
+      ]
+    },
+    {
+      "id": "account_routing",
+      "name": "Account & Lending Routing",
+      "description": "Routes customer requests to specialized deposit or loan agents for secure processing.",
+      "tags": ["Deposit", "Loan", "Routing", "A2A"],
+      "examples": [
+        "What is my balance on the vacation account?",
+        "When is my next auto payment due?",
+        "Can I get a loan for $10,000 for a car?"
+      ]
+    }
+  ]
+}

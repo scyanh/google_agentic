@@ -1,0 +1,18 @@
+# Credenciales: nunca al repo (las plantillas sí).
+.env
+.env.*
+.env[0-9]*
+!.env.example
+!.env-sample
+
+# Archivos de entrega que traen .env adentro.
+1790031583.zip
+1790031583.tar.gz
+
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.DS_Store
+__MACOSX/
+.adk/

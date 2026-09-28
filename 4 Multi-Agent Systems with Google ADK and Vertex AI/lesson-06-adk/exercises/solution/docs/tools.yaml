@@ -1,0 +1,105 @@
+sources:
+  storefront:
+    kind: mysql
+    host: ${MYSQL_HOST}
+    port: ${MYSQL_PORT:3306}
+    database: storefront
+    user: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+tools:
+  get-order:
+    kind: mysql-sql
+    source: storefront
+    description: Retrieve an order by its ID.
+    parameters:
+      - name: order_id
+        type: integer
+        description: The ID of the order to retrieve.
+    statement: SELECT * FROM orders WHERE order_id = ?
+  get-open-order-for-user:
+    kind: mysql-sql
+    source: storefront
+    description: Retrieve the open order (orders without a status) for a specific user.
+    parameters:
+      - name: user_id
+        type: string
+        description: The ID of the user.
+    statement: SELECT * FROM orders WHERE user_id = ? AND order_status IS NULL LIMIT 1
+  update-order-address:
+    kind: mysql-sql
+    source: storefront
+    description: Update the shipping address for an order.
+    parameters:
+      - name: address
+        type: string
+        description: The address as a JSON string.
+      - name: order_id
+        type: integer
+        description: The ID of the order to update.
+    statement: UPDATE orders SET address = ? WHERE order_id = ?
+  update-order-status:
+    kind: mysql-sql
+    source: storefront
+    description: Update the status of an order.
+    parameters:
+      - name: status
+        type: string
+        description: The new status of the order.
+      - name: order_id
+        type: integer
+        description: The ID of the order to update.
+    statement: UPDATE orders SET order_status = ? WHERE order_id = ?
+  update-order-costs:
+    kind: mysql-sql
+    source: storefront
+    description: Update the costs and status of an order.
+    parameters:
+      - name: shipping_cost
+        type: float
+        description: The calculated shipping cost.
+      - name: tax_amount
+        type: float
+        description: The calculated tax amount.
+      - name: total_cost
+        type: float
+        description: The total cost of the order.
+      - name: status
+        type: string
+        description: The new status of the order.
+      - name: order_id
+        type: integer
+        description: The ID of the order to update.
+    statement: UPDATE orders SET shipping_cost = ?, tax_amount = ?, total_cost = ?, order_status = ? WHERE order_id = ?
+  create-order:
+    kind: mysql-sql
+    source: storefront
+    description: Create a new order for a user and return its ID.
+    parameters:
+      - name: user_id
+        type: string
+        description: The ID of the user creating the order.
+    statement: INSERT INTO orders (user_id, cart, order_status) VALUES (?, '[]', NULL);
+  update-order-cart:
+    kind: mysql-sql
+    source: storefront
+    description: Update the cart items for an order.
+    parameters:
+      - name: cart
+        type: string
+        description: The cart items as a JSON string.
+      - name: order_id
+        type: integer
+        description: The ID of the order to update.
+    statement: UPDATE orders SET cart = CAST(? AS JSON) WHERE order_id = ?
+  add-item-to-cart:
+    kind: mysql-sql
+    source: storefront
+    description: Add an item to the cart of an order.
+    parameters:
+      - name: item_id
+        type: string
+        description: The ID of the item to add.
+      - name: order_id
+        type: integer
+        description: The ID of the order to update.
+    statement: UPDATE orders SET cart = JSON_ARRAY_APPEND(cart, '$', ?) WHERE order_id = ?

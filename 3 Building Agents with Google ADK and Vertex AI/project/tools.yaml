@@ -1,0 +1,38 @@
+sources:
+  betty_products:
+    kind: mysql
+    host: ${MYSQL_HOST}
+    port: ${MYSQL_PORT:3306}
+    database: betty
+    user: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+
+tools:
+  get_product_price:
+    kind: mysql-sql
+    source: betty_products
+    description: Queries the product database to find the price and name of items matching the product search term.
+    parameters:
+      - name: product_name
+        type: string
+        description: The name or keyword of the bird product or accessory to look up (e.g. 'Bird Seed Mix', 'Sunflower Seeds', 'Bird Feeder', 'Cuttlebone', 'Millet').
+    statement:
+      SELECT product_name, price FROM products WHERE LOWER(product_name) LIKE CONCAT('%', LOWER(?), '%');
+
+  get-product-price:
+    kind: mysql-sql
+    source: betty_products
+    description: Queries the product database to find the price and name of items matching the product search term.
+    parameters:
+      - name: product_name
+        type: string
+        description: The name or keyword of the bird product or accessory to look up.
+    statement:
+      SELECT product_name, price FROM products WHERE LOWER(product_name) LIKE CONCAT('%', LOWER(?), '%');
+
+  list_products:
+    kind: mysql-sql
+    source: betty_products
+    description: Retrieves the complete list of all products and prices currently offered in Betty's Bird Boutique.
+    statement:
+      SELECT product_name, price FROM products ORDER BY product_name ASC;
