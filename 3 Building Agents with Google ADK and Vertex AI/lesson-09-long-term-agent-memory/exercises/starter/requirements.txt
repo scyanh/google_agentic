@@ -1,3 +1,0 @@
-google-adk>=1.17.0
-google-search-results
-google-cloud-aiplatform>=1.124.0
