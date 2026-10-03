@@ -184,22 +184,13 @@ async def execute_research_workflow(
     # ========================================================================
     # STAGE 7: Performance Evaluation
     # ========================================================================
-    # TODO 8: Track workflow performance metrics 
-    #
-    # Instantiate PerformanceEvaluator and record the workflow results.
-    #
-    # Steps:
-    # 1. Calculate execution time
-    # 2. Create evaluator
-    # 3. Record metrics
-    # 4. Get summary
-    # 5. Add to workflow_results
-   
+    # Records latency, source yield, iterations, fact checks and citations in a
+    # PerformanceEvaluator and attaches its summary to workflow_results.
+
     print("\n" + "-"*80)
     print("STAGE 7: Performance Evaluation")
     print("-"*80)
 
-    # TODO 8: Implement performance evaluation here
     execution_time = time.time() - start_time
     evaluator = PerformanceEvaluator()
     evaluator.evaluate_query_result(
@@ -214,7 +205,6 @@ async def execute_research_workflow(
     )
     performance_summary = evaluator.analyze_performance()
 
-    # This section will work once you complete TODO 8
     if execution_time and evaluator and performance_summary:
         print(f"   ✓ Execution Time: {execution_time:.2f}s")
         print(f"   ✓ Performance Score: {performance_summary['performance_score']:.2f}")
@@ -232,7 +222,7 @@ async def execute_research_workflow(
             'evaluator': evaluator
         }
     else:
-        print(f"   ⚠️  Performance evaluation not implemented (complete TODO 8)")
+        print(f"   ⚠️  Performance evaluation unavailable")
         workflow_results['stage_7_performance'] = None
 
     return workflow_results

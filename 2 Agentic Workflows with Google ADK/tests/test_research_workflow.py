@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
-Test Suite for AI Research Assistant Multi-Agent System TODOs
-============================================================
-Validates Task 1 to Task 5 implementations.
+Test Suite for the AI Research Assistant Multi-Agent System
+===========================================================
+Covers the LoopAgent refinement cycle, ParallelAgent/SequentialAgent source
+gathering, the LlmAgent router, orchestrator wiring and performance evaluation.
 
 Usage:
-    python -m unittest tests/test_todos.py
+    python -m unittest tests/test_research_workflow.py
 """
 
 import sys
@@ -36,8 +37,8 @@ from agents.router import DomainClassifierAgent
 from agents.evaluator import PerformanceEvaluator, PerformanceMetrics
 
 
-class TestTask1_LoopAgent(unittest.TestCase):
-    """Test Task 1: Implement LoopAgent pattern in agents/researcher.py"""
+class TestLoopAgent(unittest.TestCase):
+    """LoopAgent refinement cycle in agents/researcher.py"""
 
     def test_create_research_loop_agent_type(self):
         """Test that create_research_loop_agent returns a LoopAgent."""
@@ -93,8 +94,8 @@ class TestTask1_LoopAgent(unittest.TestCase):
         self.assertEqual(mock_evaluate.call_count, 2)
 
 
-class TestTask2_ParallelAndSequentialAgent(unittest.TestCase):
-    """Test Task 2: Implement ParallelAgent workflow in agents/source_gatherer.py"""
+class TestParallelAndSequentialAgent(unittest.TestCase):
+    """ParallelAgent + SequentialAgent source gathering in agents/source_gatherer.py"""
 
     def test_create_source_gathering_workflow_type(self):
         """Test that create_source_gathering_workflow returns a SequentialAgent."""
@@ -154,8 +155,8 @@ class TestTask2_ParallelAndSequentialAgent(unittest.TestCase):
         mock_agg.assert_called_once()
 
 
-class TestTask3_RouterLlmAgent(unittest.TestCase):
-    """Test Task 3: Configure LlmAgent in agents/router.py"""
+class TestRouterLlmAgent(unittest.TestCase):
+    """LlmAgent domain classifier in agents/router.py"""
 
     def test_domain_classifier_initialization(self):
         """Test that DomainClassifierAgent initializes properly as an ADK LlmAgent."""
@@ -167,8 +168,8 @@ class TestTask3_RouterLlmAgent(unittest.TestCase):
         self.assertEqual(agent.generate_content_config.response_mime_type, "application/json")
 
 
-class TestTask4_OrchestratorWiring(unittest.TestCase):
-    """Test Task 4: Connect components together and handle async execution in orchestrator."""
+class TestOrchestratorWiring(unittest.TestCase):
+    """Stage wiring and async execution in the orchestrator."""
 
     def test_execute_research_loop_signature_accepts_sources(self):
         """Verify execute_research_loop accepts sources parameter."""
@@ -250,8 +251,8 @@ class TestTask4_OrchestratorWiring(unittest.TestCase):
         self.assertEqual(kwargs.get('sources'), mock_sources_data, "Stage 2 sources must be passed into Stage 3")
 
 
-class TestTask5_PerformanceEvaluator(unittest.TestCase):
-    """Test Task 5: Implement PerformanceEvaluator metrics in orchestrator."""
+class TestPerformanceEvaluator(unittest.TestCase):
+    """PerformanceEvaluator metrics in the orchestrator."""
 
     def test_evaluator_metrics_calculation(self):
         """Test that PerformanceEvaluator records and analyzes query metrics."""

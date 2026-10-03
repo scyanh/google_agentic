@@ -64,7 +64,7 @@ Confidence guidelines:
 
 Be precise in classification but acknowledge uncertainty when present."""
 
-        # TODO 5: Initialize LlmAgent for domain classification 
+        # LlmAgent configured for JSON-only, low-temperature domain classification.
         super().__init__(
             name="domain_classifier",
             model=model,

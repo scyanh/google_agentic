@@ -28,7 +28,7 @@ This document details the complete architectural design, implementation, and tes
 
 ```text
 ======================================================================
-TEST SUITE EXECUTION SUMMARY (tests/test_todos.py)
+TEST SUITE EXECUTION SUMMARY (tests/test_support_agent.py)
 ======================================================================
 Ran 22 tests in 0.004s
 
@@ -105,27 +105,27 @@ flowchart TD
 ## 3. Rubric Criteria Breakdown & Implementation Details
 
 ### Part 1: Root Agent & Session Management
-- **Agent Configuration ([`agent.py`](file:///Users/albert/Documents/dev/google_agentic/1790031583/cd14768-GCP-AgenticAI-C3-Classroom/project/starter/agent.py))**:
+- **Agent Configuration ([`agent.py`](agent.py))**:
   - `name="bettys_bird_boutique_agent"`, `description="Customer service assistant for Betty's Bird Boutique..."`.
   - Configured with `InMemorySessionService()` to track conversational context across multiple turns without persistent database overhead.
-  - Dynamically loads instructions from [`agent-prompt.txt`](file:///Users/albert/Documents/dev/google_agentic/1790031583/cd14768-GCP-AgenticAI-C3-Classroom/project/starter/agent-prompt.txt).
+  - Dynamically loads instructions from [`agent-prompt.txt`](agent-prompt.txt).
 
 ### Part 2: Product Database via Google MCP Toolbox
-- **Toolbox Definition ([`tools.yaml`](file:///Users/albert/Documents/dev/google_agentic/1790031583/cd14768-GCP-AgenticAI-C3-Classroom/project/starter/tools.yaml))**:
+- **Toolbox Definition ([`tools.yaml`](tools.yaml))**:
   - Source: `betty_products` using `kind: mysql` and environment variable substitution `${MYSQL_HOST}`, `${MYSQL_PORT:3306}`, `${MYSQL_USER}`, `${MYSQL_PASSWORD}`.
   - Tool: `get_product_price` using `kind: mysql-sql`.
   - Query:
     ```sql
     SELECT product_name, price FROM products WHERE LOWER(product_name) LIKE CONCAT('%', LOWER(?), '%');
     ```
-- **Client Integration ([`agent.py`](file:///Users/albert/Documents/dev/google_agentic/1790031583/cd14768-GCP-AgenticAI-C3-Classroom/project/starter/agent.py))**:
+- **Client Integration ([`agent.py`](agent.py))**:
   - Imports `ToolboxSyncClient` from `toolbox_core`.
   - Reads `TOOLBOX_URL` with default `http://127.0.0.1:5000` (no trailing slash).
   - Loads `get_product_price` using `db_client.load_tool()`.
   - Handles item found and item not-found scenarios consistently.
 
 ### Part 3: Unstructured Store Knowledge via Vertex AI Search Datastore
-- **Datastore Tool ([`datastore.py`](file:///Users/albert/Documents/dev/google_agentic/1790031583/cd14768-GCP-AgenticAI-C3-Classroom/project/starter/datastore.py))**:
+- **Datastore Tool ([`datastore.py`](datastore.py))**:
   - Connects to Vertex AI Search using `google.cloud.discoveryengine_v1.SearchServiceClient`.
   - Builds `SearchRequest` with `serving_config`, `query=search_query`, `page_size=10`, `ContentSearchSpec(search_result_mode=CHUNKS)`, `query_expansion_spec` (AUTO), and `spell_correction_spec` (AUTO).
   - Iterates through results and extracts chunk text into `List[str]`.
@@ -133,40 +133,40 @@ flowchart TD
   - Includes local document fallback to ensure reliable evaluation even in local offline environments.
 
 ### Part 4: Grounding with Google Search Sub-Agent
-- **Search Agent ([`search_agent.py`](file:///Users/albert/Documents/dev/google_agentic/1790031583/cd14768-GCP-AgenticAI-C3-Classroom/project/starter/search_agent.py))**:
+- **Search Agent ([`search_agent.py`](search_agent.py))**:
   - Dedicated sub-agent `bird_web_search_agent` equipped with `google_search` from `google.adk.tools`.
   - Wrapped as `search_agent_tool = AgentTool(agent=search_agent)`.
   - Model justification comment detailing latency and accuracy trade-offs.
-  - Prompt structured with the 4 dedicated sections in [`search-prompt.txt`](file:///Users/albert/Documents/dev/google_agentic/1790031583/cd14768-GCP-AgenticAI-C3-Classroom/project/starter/search-prompt.txt).
+  - Prompt structured with the 4 dedicated sections in [`search-prompt.txt`](search-prompt.txt).
 
 ---
 
 ## 4. Evidence Screenshots Reference Table
 
-All screenshots are generated in high resolution with session IDs and detailed request/response blocks in [`screenshots/`](file:///Users/albert/Documents/dev/google_agentic/1790031583/screenshots/):
+All screenshots are generated in high resolution with session IDs and detailed request/response blocks in [`screenshots/`](../screenshots/):
 
-| Screenshot File | Description | Criteria Demonstrated |
+| Screenshot | Customer question | What it shows |
 | :--- | :--- | :--- |
-| [`screenshot_1_datastore_hours.png`](file:///Users/albert/Documents/dev/google_agentic/1790031583/screenshots/screenshot_1_datastore_hours.png) | *When are you open on Thursday?* | Datastore search tool retrieving hours from `bettys-hours.pdf`. |
-| [`screenshot_2_datastore_betty.png`](file:///Users/albert/Documents/dev/google_agentic/1790031583/screenshots/screenshot_2_datastore_betty.png) | *Who is Betty?* | Datastore search tool retrieving founder history from `bettys-history.pdf`. |
-| [`screenshot_3_datastore_bird.png`](file:///Users/albert/Documents/dev/google_agentic/1790031583/screenshots/screenshot_3_datastore_bird.png) | *What kind of bird did she own?* | Datastore search tool identifying Pip the budgie from store history. |
-| [`screenshot_4_google_search_diet.png`](file:///Users/albert/Documents/dev/google_agentic/1790031583/screenshots/screenshot_4_google_search_diet.png) | *What do they eat?* | Grounding with Google Search showing sub-agent call and **visible citations**. |
-| [`screenshot_5_database_price_guardrail.png`](file:///Users/albert/Documents/dev/google_agentic/1790031583/screenshots/screenshot_5_database_price_guardrail.png) | *Can I buy that from you?* | **`get_product_price`** tool call with pricing results + anti-order guardrail. |
-| [`screenshot_6_standout_date_awareness.png`](file:///Users/albert/Documents/dev/google_agentic/1790031583/screenshots/screenshot_6_standout_date_awareness.png) | *Are you open today?* | Stand-out date-awareness tool cross-referencing hours. |
-| [`screenshot_7_database_not_found_handling.png`](file:///Users/albert/Documents/dev/google_agentic/1790031583/screenshots/screenshot_7_database_not_found_handling.png) | *Do you sell hamster wheels?* | **`get_product_price` handling not-found query** and maintaining domain scope. |
+| [`screenshot_1_datastore_hours.png`](../screenshots/screenshot_1_datastore_hours.png) | *What are your store hours on weekends?* | `datastore_search_tool` retrieving weekend hours from `bettys-hours.pdf`. |
+| [`screenshot_2_datastore_betty.png`](../screenshots/screenshot_2_datastore_betty.png) | *Who is Betty and how did she start the store?* | `datastore_search_tool` retrieving the founding story from `bettys-history.pdf`. |
+| [`screenshot_3_datastore_bird.png`](../screenshots/screenshot_3_datastore_bird.png) | *Tell me about the blue-and-gold macaw.* | `bird_web_search_agent` answering a general species question with Google Search. |
+| [`screenshot_4_google_search_diet.png`](../screenshots/screenshot_4_google_search_diet.png) | *What is the best diet for a healthy cockatiel?* | `bird_web_search_agent` answering a nutrition question with Google Search. |
+| [`screenshot_5_database_price_guardrail.png`](../screenshots/screenshot_5_database_price_guardrail.png) | *How much is the Premium Parakeet Seed? I want to order 2 bags right now.* | `get_product_price` returning $14.99, and the guardrail declining the online order. |
+| [`screenshot_6_standout_date_awareness.png`](../screenshots/screenshot_6_standout_date_awareness.png) | *Are you open today?* | `get_current_date_and_day` combined with the hours from the datastore. |
+| [`screenshot_7_database_not_found_handling.png`](../screenshots/screenshot_7_database_not_found_handling.png) | *Do you sell diamond encrusted bird cages?* | `get_product_price` handling a product that is not in the catalog. |
 
 ---
 
 ## 5. How to Run Locally & Verify
 
 ```bash
-cd cd14768-GCP-AgenticAI-C3-Classroom/project/starter
+cd "3 Building Agents with Google ADK and Vertex AI/project"
 export $(grep -v '^#' .env | xargs)
 
 # Run Automated Test Suite
-/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 -m unittest tests/test_todos.py
+python3 -m unittest tests/test_support_agent.py
 
-# Launch ADK Web Previewer
-cd ../
-adk web starter
+# Launch ADK Web Previewer and select "project"
+cd ..
+adk web
 ```

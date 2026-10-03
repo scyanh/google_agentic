@@ -21,6 +21,24 @@ Each project has its own README with architecture, setup steps and screenshots o
 
 **4. Multi-Agent Banking System.** Three agents run as separate services that talk over A2A, so each one can only reach its own data. The loan agent runs an approval pipeline in stages: it gathers data, checks policy from documents in GCS, reviews the customer profile and equity in parallel (including an A2A balance check against the deposit agent), and writes a final report with a privacy guardrail.
 
+## Screenshots
+
+**1. Legal Intelligence AI System.** `POST /analyze` returning a generated legal report.
+
+![Legal analysis](1%20Prompting%20for%20Effective%20LLM%20Reasoning%20with%20Gemini/screenshots/4_legal_analysis.png)
+
+**2. AI Research Assistant.** Parallel searches overlapping, then the researcher and critic iterating in the `LoopAgent` until the quality threshold is met.
+
+![Research loop](2%20Agentic%20Workflows%20with%20Google%20ADK/screenshots/2_logic_loop.png)
+
+**3. Betty's Bird Boutique.** A price lookup from MySQL through MCP Toolbox, with the guardrail declining an online order.
+
+![Price lookup and order guardrail](3%20Building%20Agents%20with%20Google%20ADK%20and%20Vertex%20AI/screenshots/screenshot_5_database_price_guardrail.png)
+
+**4. Multi-Agent Banking System.** The loan approval pipeline writing its review to state and approving a $10,000 auto loan.
+
+![Loan approval](4%20Multi-Agent%20Systems%20with%20Google%20ADK%20and%20Vertex%20AI/screenshots/3_loan_approval_success_state.png)
+
 ## Stack
 
 Python · Google ADK · Gemini 2.5 (Flash and Pro) · Vertex AI · Vertex AI Search · MCP Toolbox · A2A · Cloud SQL (MySQL) · Cloud Storage · FastAPI
@@ -28,10 +46,10 @@ Python · Google ADK · Gemini 2.5 (Flash and Pro) · Vertex AI · Vertex AI Sea
 ## Repository layout
 
 ```
-1 Prompting for Effective LLM Reasoning with Gemini/   Project 1 (Project Starter Code/)
-2 Agentic Workflows with Google ADK/                   Project 2 (project-starter/)
+1 Prompting for Effective LLM Reasoning with Gemini/   Project 1 (code at the folder root)
+2 Agentic Workflows with Google ADK/                   Project 2 (code at the folder root)
 3 Building Agents with Google ADK and Vertex AI/       Project 3 (project/) and lesson exercises
 4 Multi-Agent Systems with Google ADK and Vertex AI/   Project 4 (project/) and lesson exercises
 ```
 
-The `lesson-*` folders and project starter code come from Udacity's course materials, which are © Udacity and licensed under their own [LICENSE.md](4%20Multi-Agent%20Systems%20with%20Google%20ADK%20and%20Vertex%20AI/LICENSE.md). Credentials are never committed: the projects read them from environment variables or a local `.env` file.
+The `lesson-*` folders and the base project scaffolding come from Udacity's course materials, which are © Udacity and licensed under their own [LICENSE.md](4%20Multi-Agent%20Systems%20with%20Google%20ADK%20and%20Vertex%20AI/LICENSE.md). Credentials are never committed: the projects read them from environment variables or a local `.env` file.

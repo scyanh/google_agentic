@@ -11,7 +11,7 @@ Validates all Rubric Criteria:
 5. Part 5: Guardrails, Privacy & Safety Verification
 
 Usage:
-    python3 -m unittest tests/test_todos.py -v
+    python3 -m unittest tests/test_banking_agents.py -v
 """
 
 import asyncio

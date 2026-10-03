@@ -40,7 +40,7 @@ flowchart TD
 ## 📁 Project Structure
 
 ```text
-starter/
+project/
 ├── deposit/                      # Deposit Account Agent
 │   ├── agent.py                 # Root agent definition and tool loading
 │   ├── agent.json               # A2A Agent Card for discovery
@@ -66,11 +66,12 @@ starter/
 │   ├── loan.sql                 # Loan database DDL & sample data
 │   ├── loan-policy.pdf          # Bank lending policy document
 │   └── loan-customer-info.pdf   # Customer profile and credit history
-├── tests/                        # Automated Rubric Verification Test Suite
-│   └── test_todos.py            # 21 unit tests covering all 5 rubric parts
-├── screenshots/                  # High-fidelity terminal & UI evidence
-├── scripts/                      # Utility scripts
-│   └── create_terminal_screenshots.py # Generates verified UI/terminal mockups
+├── tests/                        # Automated unit tests
+│   └── test_banking_agents.py   # 21 unit tests across the five parts of the system
+├── testing/                      # A2A batch evaluation
+│   ├── bin/a2a.py               # Sends each scenario to the manager over A2A
+│   ├── test_scenarios.csv       # Multi-turn customer scenarios
+│   └── sampleOutputs/           # Reference results (.csv, .json, .txt)
 └── final_report.md              # Executive board report with architecture & risk analysis
 ```
 
@@ -103,7 +104,7 @@ toolbox --tools-files "deposit/tools.yaml" --tools-files "loan/tools.yaml" --por
 
 ### 3. Launch Agents with ADK Web & A2A Server
 ```bash
-# From the project/starter directory
+# From the project directory
 adk web --a2a --port 8000
 ```
 Open `http://localhost:8000` in your web browser:
@@ -115,10 +116,10 @@ Open `http://localhost:8000` in your web browser:
 
 ## 🧪 Automated Testing & Evaluation
 
-### Run Rubric Unit Test Suite
+### Run Unit Test Suite
 Execute the 21 comprehensive unit tests covering agent instances, tools, mathematical precision, and security guardrails:
 ```bash
-python3 -m unittest tests/test_todos.py -v
+python3 -m unittest tests/test_banking_agents.py -v
 ```
 **Result:** 21/21 tests passing (`100% OK`).
 
@@ -131,6 +132,40 @@ Outputs:
 * `test_results.csv`: Maps message IDs to final text responses.
 * `test_results.json`: Complete event stream including tool invocations and state deltas.
 * `test_results.txt`: Human-readable formatted conversation logs.
+
+---
+
+## Screenshots
+
+### Deposit agent: balance lookup and total-balance guardrail
+`get_balance` returns the vacation account balance. When asked for the total on deposit, the agent calls `get_accounts` but refuses to add the balances together.
+
+![Deposit balance and guardrail](../screenshots/1_deposit_balance_and_guardrail.png)
+
+### Manager agent: routing between deposit and loan agents
+The manager answers a transaction question through the deposit agent, then uses `transfer_to_agent` to hand an auto-payment question to the loan agent, which calls `get_loan_info`.
+
+![Manager routing](../screenshots/2_manager_agent_routing.png)
+
+### Loan approval: approved request
+The pipeline writes `user_profile` and `check_equity` to state, and `loan_approval_report_agent` approves a $10,000 auto loan.
+
+![Loan approved](../screenshots/3_loan_approval_success_state.png)
+
+### Loan approval: rejected request
+A $50,000 request is declined. The customer only gets a respectful notice, with no credit rating or internal ratios disclosed.
+
+![Loan rejected](../screenshots/4_loan_approval_rejected_state.png)
+
+### A2A batch evaluation
+`testing/bin/a2a.py` sends the 18 scenario messages in `test_scenarios.csv` to the manager over A2A.
+
+![A2A test suite](../screenshots/5_a2a_test_suite_execution.png)
+
+### Unit tests
+All 21 unit tests pass.
+
+![Unit tests](../screenshots/6_automated_unit_tests.png)
 
 ---
 

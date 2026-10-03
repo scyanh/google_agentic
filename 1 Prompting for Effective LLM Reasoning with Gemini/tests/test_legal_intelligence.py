@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """
-Test Suite for Legal Intelligence AI System TODOs
-=================================================
-Run these tests to validate your TODO implementations.
+Test Suite for the Legal Intelligence AI System
+==============================================
+Covers Vertex AI initialization, section and report generation, coherence and
+groundedness scoring, and the three expert personas.
 
 Usage:
-    python tests/test_todos.py
-
-Each test corresponds to a specific TODO in the project.
+    python tests/test_legal_intelligence.py
 """
 
 import os
@@ -28,8 +27,8 @@ from src.prompts.personas import LegalPersonas
 from src.models.legal_models import LegalScenario, TokenUsage
 
 
-class TestTODO1_VertexAIInitialization(unittest.TestCase):
-    """Test TODO 1: Vertex AI Initialization"""
+class TestVertexAIInitialization(unittest.TestCase):
+    """Vertex AI Initialization"""
 
     def setUp(self):
         """Set up test environment."""
@@ -74,8 +73,8 @@ class TestTODO1_VertexAIInitialization(unittest.TestCase):
         self.assertFalse(self.agent.initialized, "Agent should not be marked as initialized")
 
 
-class TestTODO2_ContentGeneration(unittest.TestCase):
-    """Test TODO 2: Section Content Generation"""
+class TestContentGeneration(unittest.TestCase):
+    """Section Content Generation"""
 
     def setUp(self):
         """Set up test environment."""
@@ -162,8 +161,8 @@ class TestTODO2_ContentGeneration(unittest.TestCase):
         self.assertIn("not initialized", str(context.exception).lower())
 
 
-class TestTODO3_CompleteReport(unittest.IsolatedAsyncioTestCase):
-    """Test TODO 3: Complete Report Generation"""
+class TestCompleteReport(unittest.IsolatedAsyncioTestCase):
+    """Complete Report Generation"""
 
     def setUp(self):
         """Set up test environment."""
@@ -229,8 +228,8 @@ class TestTODO3_CompleteReport(unittest.IsolatedAsyncioTestCase):
         self.assertGreater(report.confidence_score, 0)
 
 
-class TestTODO4_CoherenceScoring(unittest.TestCase):
-    """Test TODO 4: Coherence Scoring Algorithm"""
+class TestCoherenceScoring(unittest.TestCase):
+    """Coherence Scoring Algorithm"""
 
     def setUp(self):
         """Set up test environment."""
@@ -298,8 +297,8 @@ class TestTODO4_CoherenceScoring(unittest.TestCase):
         self.assertGreater(score_structure, 0, "Structure words should contribute to score")
 
 
-class TestTODO5_GroundednessScoring(unittest.TestCase):
-    """Test TODO 5: Groundedness Scoring Algorithm"""
+class TestGroundednessScoring(unittest.TestCase):
+    """Groundedness Scoring Algorithm"""
 
     def setUp(self):
         """Set up test environment."""
@@ -367,8 +366,8 @@ class TestTODO5_GroundednessScoring(unittest.TestCase):
         self.assertGreater(score, 0.3, "Content with reasoning should score > 0.3")
 
 
-class TestTODO6_BusinessAnalystPersona(unittest.TestCase):
-    """Test TODO 6: Business Analyst Persona"""
+class TestBusinessAnalystPersona(unittest.TestCase):
+    """Business Analyst Persona"""
 
     def setUp(self):
         """Set up test environment."""
@@ -424,8 +423,8 @@ class TestTODO6_BusinessAnalystPersona(unittest.TestCase):
         )
 
 
-class TestTODO7_MarketResearcherPersona(unittest.TestCase):
-    """Test TODO 7: Market Researcher Persona"""
+class TestMarketResearcherPersona(unittest.TestCase):
+    """Market Researcher Persona"""
 
     def setUp(self):
         """Set up test environment."""
@@ -482,8 +481,8 @@ class TestTODO7_MarketResearcherPersona(unittest.TestCase):
         )
 
 
-class TestTODO8_StrategicConsultantPersona(unittest.TestCase):
-    """Test TODO 8: Strategic Consultant Persona"""
+class TestStrategicConsultantPersona(unittest.TestCase):
+    """Strategic Consultant Persona"""
 
     def setUp(self):
         """Set up test environment."""
@@ -550,14 +549,14 @@ def run_tests():
 
     # Add all test classes
     test_classes = [
-        TestTODO1_VertexAIInitialization,
-        TestTODO2_ContentGeneration,
-        TestTODO3_CompleteReport,
-        TestTODO4_CoherenceScoring,
-        TestTODO5_GroundednessScoring,
-        TestTODO6_BusinessAnalystPersona,
-        TestTODO7_MarketResearcherPersona,
-        TestTODO8_StrategicConsultantPersona,
+        TestVertexAIInitialization,
+        TestContentGeneration,
+        TestCompleteReport,
+        TestCoherenceScoring,
+        TestGroundednessScoring,
+        TestBusinessAnalystPersona,
+        TestMarketResearcherPersona,
+        TestStrategicConsultantPersona,
     ]
 
     for test_class in test_classes:
@@ -575,25 +574,25 @@ def run_tests():
     print(f"Failures: {len(result.failures)}")
     print(f"Errors: {len(result.errors)}")
 
-    # Per-TODO status
-    todo_labels = [
-        (TestTODO1_VertexAIInitialization, "TODO 1: Vertex AI Initialization"),
-        (TestTODO2_ContentGeneration, "TODO 2: Generate Section Content"),
-        (TestTODO3_CompleteReport, "TODO 3: Generate Complete Report"),
-        (TestTODO4_CoherenceScoring, "TODO 4: Coherence Scoring"),
-        (TestTODO5_GroundednessScoring, "TODO 5: Groundedness Scoring"),
-        (TestTODO6_BusinessAnalystPersona, "TODO 6: Business Analyst Persona"),
-        (TestTODO7_MarketResearcherPersona, "TODO 7: Market Researcher Persona"),
-        (TestTODO8_StrategicConsultantPersona, "TODO 8: Strategic Consultant Persona"),
+    # Per-component status
+    component_labels = [
+        (TestVertexAIInitialization, "Vertex AI Initialization"),
+        (TestContentGeneration, "Generate Section Content"),
+        (TestCompleteReport, "Generate Complete Report"),
+        (TestCoherenceScoring, "Coherence Scoring"),
+        (TestGroundednessScoring, "Groundedness Scoring"),
+        (TestBusinessAnalystPersona, "Business Analyst Persona"),
+        (TestMarketResearcherPersona, "Market Researcher Persona"),
+        (TestStrategicConsultantPersona, "Strategic Consultant Persona"),
     ]
     failed_classes = {type(test) for test, _ in result.failures + result.errors}
     print()
-    for test_class, label in todo_labels:
+    for test_class, label in component_labels:
         status = "✗ FAILED" if test_class in failed_classes else "✓ PASSED"
         print(f"{label} {'.' * (44 - len(label))} {status}")
 
     if result.wasSuccessful():
-        print("\nALL TODOS COMPLETED! ✅")
+        print("\nALL COMPONENTS PASSED! ✅")
     else:
         print("\n❌ SOME TESTS FAILED. Review the errors above.")
 

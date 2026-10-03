@@ -37,21 +37,56 @@ export $(grep -v '^#' .env | xargs)
 ```
 
 ### 2. Run Automated Test Suite
-Verify all 22 Rubric verification tests:
+Run the 22 unit tests from the `project/` folder:
 ```bash
-python3 -m unittest tests/test_todos.py
+python3 -m unittest tests/test_support_agent.py
 ```
 
 ### 3. Launch with ADK Web Previewer
 To test conversational flows interactively:
 ```bash
-# From the parent directory of starter
-adk web starter
+# From the parent folder; then select "project" in the UI
+cd ..
+adk web
 ```
 
-### 4. Rubric 5-Turn Conversation Sequence
-1. **Store Hours**: *"When are you open on Thursday?"* (Uses `datastore_search_tool`)
-2. **Founder History**: *"Who is Betty?"* (Uses `datastore_search_tool`)
-3. **Pet Bird**: *"What kind of bird did she own?"* (Uses `datastore_search_tool`)
-4. **Bird Diet**: *"What do they eat?"* (Uses `bird_web_search_agent` via Google Search)
-5. **Product Pricing & Order Guardrail**: *"Can I buy that from you?"* (Uses `get-product-price`, declines online orders, and invites to store)
+---
+
+## Screenshots
+
+Conversations in the ADK Web UI. Each one shows which tool or sub-agent the agent called before answering.
+
+### Store hours from the datastore
+*"What are your store hours on weekends?"* is answered with `datastore_search_tool`, which retrieves the hours from `bettys-hours.pdf`.
+
+![Store hours](../screenshots/screenshot_1_datastore_hours.png)
+
+### Store history from the datastore
+*"Who is Betty and how did she start the store?"* returns the 1980 founding story from `bettys-history.pdf`.
+
+![Founder history](../screenshots/screenshot_2_datastore_betty.png)
+
+### Bird species via Google Search
+*"Tell me about the blue-and-gold macaw."* is delegated to `bird_web_search_agent`.
+
+![Blue-and-gold macaw](../screenshots/screenshot_3_datastore_bird.png)
+
+### Bird nutrition via Google Search
+*"What is the best diet for a healthy cockatiel?"* is also delegated to `bird_web_search_agent`.
+
+![Cockatiel diet](../screenshots/screenshot_4_google_search_diet.png)
+
+### Product price and order guardrail
+*"How much is the Premium Parakeet Seed? I want to order 2 bags right now."* `get_product_price` returns $14.99, and the agent declines the online order and invites the customer to the store.
+
+![Price lookup and order guardrail](../screenshots/screenshot_5_database_price_guardrail.png)
+
+### Date awareness
+*"Are you open today?"* combines `get_current_date_and_day` with the hours from the datastore.
+
+![Are you open today](../screenshots/screenshot_6_standout_date_awareness.png)
+
+### Product not found
+*"Do you sell diamond encrusted bird cages?"* `get_product_price` finds no match, and the agent suggests products the store does carry.
+
+![Product not found](../screenshots/screenshot_7_database_not_found_handling.png)

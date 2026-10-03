@@ -18,7 +18,7 @@ The system implements a 7-stage pipeline with specialized ADK orchestration patt
 3. **Stage 3: Research Refinement (`agents/researcher.py`)**
    - **Pattern:** `LoopAgent` (Generator-Critic Cycle)
    - Composed into `research_refinement_loop` (`LoopAgent` containing `researcher` and `critic` in order).
-   - Executed through ADK `Runner` and `InMemorySessionService`. Multi-iteration refinement and termination are natively controlled by the ADK `LoopAgent` engine: the `critic` evaluates drafts and emits `EventActions(escalate=True)` to exit the loop once quality meets the rubric threshold (`>= 0.80`).
+   - Executed through ADK `Runner` and `InMemorySessionService`. Multi-iteration refinement and termination are natively controlled by the ADK `LoopAgent` engine: the `critic` evaluates drafts and emits `EventActions(escalate=True)` to exit the loop once quality meets the threshold (`>= 0.80`).
 4. **Stage 4: Fact Checking (`agents/other_agents.py` / `agents/fact_checker.py`)**
    - **Pattern:** `LlmAgent`
    - Extracts specific factual claims, cross-references against knowledge, and calculates credibility scores.
@@ -34,14 +34,14 @@ The system implements a 7-stage pipeline with specialized ADK orchestration patt
 
 ---
 
-## Submission Evidence: Terminal Screenshots
+## Screenshots
 
-Per the Udacity rubric requirements, terminal evidence is captured below:
+Terminal output from a live run against Vertex AI:
 
 ### 1. Initialization: Multi-Agent Hierarchy & Object Creation
 Demonstrates the instantiation of Google ADK workflow patterns, explicitly logging object creation for `Created LoopAgent`, `Created ParallelAgent`, and `Created SequentialAgent`:
 
-![1. Initialization: Multi-Agent Hierarchy & Object Creation](./screenshots/01_initialization.png)
+![1. Initialization: Multi-Agent Hierarchy & Object Creation](./screenshots/1_initialization.png)
 
 *Key verified log points:*
 - Explicit creation of `Created SequentialAgent: source_gathering_workflow`
@@ -54,7 +54,7 @@ Demonstrates the instantiation of Google ADK workflow patterns, explicitly loggi
 ### 2. The Logic Loop: ParallelAgent Overlapping Searches & ADK LoopAgent Multi-Iteration
 Demonstrates the active execution of the multi-agent logic, including `[Thought Process]` domain routing, concurrent overlapping searches, and native LoopAgent iterations:
 
-![2. Logic Loop: Overlapping Searches & ADK LoopAgent Refinement](./screenshots/02_logic_loop.png)
+![2. Logic Loop: Overlapping Searches & ADK LoopAgent Refinement](./screenshots/2_logic_loop.png)
 
 *Key verified log points:*
 - **Parallel Fan-Out / Fan-In:** `parallel_source_searches` executes all three searchers concurrently with overlapping start logs (`→ web_search running...`, `→ arxiv_search running...`, `→ scholar_search running...`) yielding asynchronously before `source_aggregator` executes.
@@ -68,7 +68,7 @@ Demonstrates the active execution of the multi-agent logic, including `[Thought 
 ### 3. Completion: Summary, Metrics & Generated Research Report
 Demonstrates the final completion of the entire 7-stage multi-agent workflow, confirmed metrics, and report persistence:
 
-![3. Completion: Summary, Metrics & Generated Research Report](./screenshots/03_completion.png)
+![3. Completion: Summary, Metrics & Generated Research Report](./screenshots/3_completion.png)
 
 *Key verified log points:*
 - Prominent header: `WORKFLOW COMPLETED`
@@ -83,13 +83,13 @@ Demonstrates the final completion of the entire 7-stage multi-agent workflow, co
 
 ---
 
-## Tasks Completed
+## Key Components
 
-- [x] **Task 1 (`agents/researcher.py`)**: Implemented `create_research_loop_agent` with `ResearcherAgent` and `ResearchCriticAgent` composed in an ADK `LoopAgent`.
-- [x] **Task 2 (`agents/source_gatherer.py`)**: Implemented `create_source_gathering_workflow` using `ParallelAgent` (*fan-out*) wrapped inside a `SequentialAgent` with `SourceAggregatorAgent` (*fan-in*).
-- [x] **Task 3 (`agents/router.py`)**: Configured `DomainClassifierAgent` initializing the ADK `LlmAgent` base class with JSON schema config.
-- [x] **Task 4 (`agents/orchestrator.py`)**: Wired the system end-to-end; connected Stage 2 gathered sources directly into Stage 3's research loop context, handling async execution.
-- [x] **Task 5 (`agents/orchestrator.py`)**: Integrated `PerformanceEvaluator` in Stage 7 to track workflow metrics, calculate system health, and log bottlenecks.
+- **`agents/researcher.py`**: `create_research_loop_agent` composes `ResearcherAgent` and `ResearchCriticAgent` in an ADK `LoopAgent`.
+- **`agents/source_gatherer.py`**: `create_source_gathering_workflow` wraps a `ParallelAgent` (*fan-out*) and `SourceAggregatorAgent` (*fan-in*) in a `SequentialAgent`.
+- **`agents/router.py`**: `DomainClassifierAgent` extends the ADK `LlmAgent` with a low-temperature JSON response config.
+- **`agents/orchestrator.py`**: runs the seven stages end to end, feeding the sources gathered in Stage 2 into the Stage 3 research loop and handling async execution.
+- **`agents/orchestrator.py` + `agents/evaluator.py`**: `PerformanceEvaluator` tracks workflow metrics in Stage 7, computes system health and logs bottlenecks.
 
 ---
 
@@ -138,10 +138,10 @@ Demonstrates the final completion of the entire 7-stage multi-agent workflow, co
 ## How to Test
 
 ### 1. Automated Unit Tests (Mocked)
-Run the full test suite covering all 5 tasks and ADK Runner execution without calling live APIs:
+Run the full test suite, including ADK Runner execution, without calling live APIs:
 
 ```bash
-python3 -m unittest tests/test_todos.py -v
+python3 -m unittest tests/test_research_workflow.py -v
 ```
 
 All 10 unit tests validate:

@@ -12,7 +12,7 @@ Validates all Rubric Criteria & Reviewer Feedback:
 7. Stand-Out Features (Date-Awareness & Product Catalog)
 
 Usage:
-    python3 -m unittest tests/test_todos.py
+    python3 -m unittest tests/test_support_agent.py
 """
 
 import inspect

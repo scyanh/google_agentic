@@ -2,18 +2,15 @@
 """
 Legal Intelligence AI System - Main Application
 ===============================================
-Welcome to LexiMind Solutions! You've been brought in as the Lead AI Architect
-to fix our Legal Intelligence System. The infrastructure is built, but the AI
-agents don't know how to think, analyze, or communicate.
-
-Your mission: Make the agents intelligent by completing the TODOs.
+FastAPI service where specialized expert personas analyze a legal case on
+Vertex AI (Gemini) and produce a multi-section report scored for quality.
 
 Architecture:
-- FastAPI server for API endpoints [WORKING]
-- Multiple specialized agents [BROKEN - need personas]
-- Chain-of-thought reasoning [BROKEN - not implemented]
-- Quality validation [BROKEN - scoring algorithms missing]
-- Context chaining between agents [BROKEN - no context passing]
+- FastAPI server exposing /analyze, /validate, /agents, /metrics, /health
+- Expert personas (business analyst, market researcher, strategic consultant)
+- Chain-of-thought prompting per report section
+- Quality validation with coherence and groundedness scoring
+- Context chaining: each section is prompted with the two preceding sections
 
 Author: LexiMind Solutions Engineering Team
 """

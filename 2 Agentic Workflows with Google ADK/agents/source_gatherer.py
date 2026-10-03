@@ -425,21 +425,15 @@ def create_source_gathering_workflow(model: str = "gemini-2.0-flash", client: ge
         scholar_search.client = client
         aggregator.client = client
 
-    # TODO 3: Create ParallelAgent for concurrent searches
-    #
-    # Create a ParallelAgent that runs all three search agents concurrently.
-    # This is the "fan-out" part of the fan-out/fan-in pattern.
+    # Fan-out: ParallelAgent runs the web, arXiv and Scholar searches concurrently.
 
     parallel_searches = ParallelAgent(
         name="parallel_source_searches",
         sub_agents=[web_search, arxiv_search, scholar_search]
     )
 
-    # TODO 4: Wrap with SequentialAgent
-    #
-    # Create a SequentialAgent that orchestrates the workflow:
-    # 1. First runs the ParallelAgent (fan-out: all searches run concurrently)
-    # 2. Then runs the aggregator (fan-in: combines all results)
+    # Fan-in: SequentialAgent runs the parallel searches first, then the
+    # aggregator that deduplicates and ranks the combined results.
 
     source_gathering_workflow = SequentialAgent(
         name="source_gathering_workflow",

@@ -1,37 +1,80 @@
-# Purpose of This Repo
+# Multi-Agent Banking Intelligence System
 
-This repo is meant to be used to keep things organized during content development and act as the source of truth for all projects and exercises related to this course.
+A multi-agent banking prototype built with **Google's Agent Development Kit (ADK)** and the **Agent-to-Agent (A2A)** protocol. A front-desk manager agent routes customers to isolated deposit and loan agents, and new loan requests go through a deterministic approval pipeline.
 
-## Folder Structure
+The code lives in [`project/`](project). Setup, environment variables and run commands are in [`project/README.md`](project/README.md), and the executive report is in [`project/final_report.md`](project/final_report.md).
 
-### Lesson Folder
+---
 
-This repo contains a folder for each `lesson` and one `project` folder.
+## System Architecture
 
-Example
+The system segregates banking data and workflows across three independent agents connected via A2A:
+
+```mermaid
+flowchart TD
+    Customer([Customer]) -->|Inquiry| Manager[Manager Agent: bank_agent<br/>Model: gemini-2.5-flash<br/>Port 8000 /a2a/manager]
+    
+    Manager -->|Direct General FAQ| FAQ[Operating Hours, Locations, Support]
+    Manager -->|A2A: Deposit Inquiries| Deposit[Deposit Account Agent<br/>deposit_account_agent<br/>Model: gemini-2.5-pro]
+    Manager -->|A2A: Loan Inquiries & Requests| Loan[Loan Account Agent<br/>loan_account_agent<br/>Model: gemini-2.5-pro]
+    
+    Deposit <-->|MCP Toolbox| DepDB[(bank.accounts<br/>bank.transactions)]
+    Loan <-->|MCP Toolbox| LoanDB[(bank.loans)]
+    
+    subgraph LoanApprovalPipeline ["Loan Approval Orchestrator (loan_approval_agent)"]
+        Loan -->|New Loan Request| S1[loan_approval_data_agent<br/>SequentialAgent]
+        S1 --> S2[loan_approval_policy_agent<br/>LlmAgent via GCS PDF]
+        S2 --> S3[loan_approval_review_agent<br/>ParallelAgent]
+        
+        subgraph ParallelBranches ["Parallel Execution"]
+            S3 --> UPA[loan_approval_user_profile_agent<br/>LlmAgent via GCS PDF]
+            S3 --> DEA[loan_approval_debt_equity_agent<br/>SequentialAgent]
+            DEA --> TVA[TotalValueAgent<br/>Custom Python Math Agent]
+            TVA -->|A2A check-minimum-balance| Deposit
+        end
+        
+        S3 --> S4[loan_approval_report_agent<br/>LlmAgent - gemini-2.5-pro]
+    end
 ```
-lesson-1-hello
-lesson-2-world
-lesson-3-foo
-lesson-4-bar
-project
-```
 
-Each `lesson` folder is named using the naming convention of `lesson-#-name-of-lesson`.
+---
 
-Example
-```
-lesson-1-hello
-```
+## Screenshots
 
-Four lesson folders have been provided as a template; However, you may need to add more or possibly use less than four depending on what is needed.
+### Deposit agent: balance lookup and total-balance guardrail
+`get_balance` returns the vacation account balance. When asked for the total on deposit, the agent calls `get_accounts` but refuses to add the balances together.
 
-If you require an additional lesson folder, you can make a copy of the folder and paste it into the root directory.
+![Deposit balance and guardrail](./screenshots/1_deposit_balance_and_guardrail.png)
 
-### Exercises Folder
+### Manager agent: routing between deposit and loan agents
+The manager answers a transaction question through the deposit agent, then uses `transfer_to_agent` to hand an auto-payment question to the loan agent, which calls `get_loan_info`.
 
-Each `lesson` folder contains an `exercises` folder. This `exercises` folder should contain all files and instructions necessary for the exercises along with the solution. The solutions for these exercises will be shared with students. See the `README` in the `exercises` folder for information about folder structure.
+![Manager routing](./screenshots/2_manager_agent_routing.png)
 
-### Project Folder
+### Loan approval: approved request
+The pipeline writes `user_profile` and `check_equity` to state, and `loan_approval_report_agent` approves a $10,000 auto loan.
 
-The `project` folder should contain all files and instructions necessary for setup. If possible, a set of instructions should be provided for both Udacity workspaces and a way to work locally (for both MacOS and Windows OS). At a minimum, one set of instructions should be provided. A `README` template has been provided in the project folder. This template layout should be used to write your README.
+![Loan approved](./screenshots/3_loan_approval_success_state.png)
+
+### Loan approval: rejected request
+A $50,000 request is declined. The customer only gets a respectful notice, with no credit rating or internal ratios disclosed.
+
+![Loan rejected](./screenshots/4_loan_approval_rejected_state.png)
+
+### A2A batch evaluation
+`testing/bin/a2a.py` sends the 18 scenario messages in `test_scenarios.csv` to the manager over A2A.
+
+![A2A test suite](./screenshots/5_a2a_test_suite_execution.png)
+
+### Unit tests
+All 21 unit tests pass.
+
+![Unit tests](./screenshots/6_automated_unit_tests.png)
+
+---
+
+## Security & Privacy Guardrails
+
+1. **Total Balance Prohibition**: In compliance with banking security standards, the deposit agent strictly refuses to output total aggregate balances across accounts, mitigating unauthorized asset reconnaissance (`msg-003-1`).
+2. **Rejection Privacy Enforcement**: When an application is declined (`msg-007-2`), the loan approval pipeline generates a respectful, general notification without disclosing proprietary credit ratings, debt ratios, or internal bank formulas.
+3. **Deterministic Math**: The custom `TotalValueAgent` computes required minimum deposit balances using Python floating-point arithmetic, entirely eliminating LLM hallucination risks during financial underwriting.

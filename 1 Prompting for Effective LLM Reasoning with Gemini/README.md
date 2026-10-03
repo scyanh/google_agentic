@@ -1,224 +1,85 @@
-# Legal Intelligence AI System - Project
+# Legal Intelligence AI System
 
-Welcome to the Legal Intelligence AI System project! You've been hired as the Lead AI Architect at LexiMind Solutions to fix a broken AI system that analyzes legal cases.
+A FastAPI service where specialized expert personas analyze a legal case on **Vertex AI** (`gemini-2.5-flash`) and write a six-section report. Every section is scored for quality before it is accepted.
 
-## Project Overview
+---
 
-The engineering team has built the infrastructure, but the AI agents don't know how to think, analyze, or communicate. Your mission is to complete 8 TODOs to make the system intelligent.
+## How it works
 
-### What's Working ✅
-- FastAPI server and endpoints
-- Data models and validation
-- Logging and monitoring
-- Basic infrastructure
+1. **Vertex AI client** (`src/core/agent_system.py`). It connects to Vertex AI through the `google-genai` SDK and verifies the connection with a one-word prompt at startup. If initialization fails it returns `False`, and the API answers 503 instead of crashing.
+2. **Section generation** (`src/core/agent_system.py`). Each prompt combines a persona, chain-of-thought instructions, the two preceding sections and the case facts. Calls retry up to three times with exponential backoff, and every call records tokens, cost and latency.
+3. **Report orchestration** (`src/core/agent_system.py`). The report has six sections: liability assessment, damage calculation, prior art analysis, competitive landscape, risk assessment and strategic recommendations. Sections that score below 0.7 are regenerated once with the validator's feedback, and the better draft is kept. If a section still fails, it becomes a labelled placeholder so the rest of the report survives.
+4. **Quality validation** (`src/core/quality_validator.py`). Coherence is scored from paragraphs, logical connectors, structure markers and sentence depth. Groundedness is scored from section-specific legal keywords, reasoning indicators and expected elements. Completeness and structure are combined with both into an overall score.
+5. **Expert personas** (`src/prompts/personas.py`):
+   - **Business Analyst:** damages and financial modeling (Georgia-Pacific, entire market value, NPV/ROI).
+   - **Market Researcher:** prior art, patent landscapes and competitive intelligence.
+   - **Strategic Consultant:** risk matrices, settlement and licensing strategy, and executive recommendations.
 
-### What's Broken ❌
-- Can't connect to Vertex AI (TODO 1)
-- Can't generate content (TODO 2)
-- Can't create complete reports (TODO 3)
-- No quality validation (TODOs 4-5)
-- Agents have no personalities (TODOs 6-8)
-
-## Project Structure
+## Project structure
 
 ```
-project/
-├── starter/              # Your working directory (broken code)
-│   ├── main.py          # FastAPI application
-│   ├── src/
-│   │   ├── core/        # Core system components
-│   │   │   ├── agent_system.py    # TODOs 1-3: AI integration
-│   │   │   └── quality_validator.py # TODOs 4-5: Quality scoring
-│   │   ├── prompts/     # Agent personas
-│   │   │   └── personas.py         # TODOs 6-8: Expert personas
-│   │   ├── models/      # Data models (working)
-│   │   └── utils/       # Utilities (working)
-│   ├── tests/           # Test suite
-│   └── test_scenarios.json # Sample legal cases
-│
-└── solution/            # Reference implementation (don't peek!)
+main.py                     FastAPI app: /analyze, /validate, /agents, /metrics, /status, /health
+src/
+├── core/
+│   ├── agent_system.py     Vertex AI client, section generation, report orchestration
+│   └── quality_validator.py Coherence, groundedness, completeness and structure scoring
+├── prompts/personas.py     Business analyst, market researcher and strategic consultant personas
+├── models/legal_models.py  Pydantic models for scenarios, sections and reports
+└── utils/logger.py
+tests/test_legal_intelligence.py  21 unit tests (mocked, no live API calls)
+test_scenarios.json         Sample legal cases
+final_report.md             Full run: test output, API responses and a generated report
 ```
 
-## The 8 TODOs
+## Screenshots
 
-### TODO 1: Initialize Vertex AI (agent_system.py)
-Connect to Google's Vertex AI to enable AI capabilities.
+### Unit tests
+All 21 tests pass without calling Vertex AI.
 
-### TODO 2: Generate Section Content (agent_system.py)
-Implement content generation with retry logic and token tracking.
+![Unit tests](./screenshots/1_unit_tests.png)
 
-### TODO 3: Generate Complete Report (agent_system.py)
-Orchestrate multiple agents to create comprehensive legal analysis.
+### Server startup
+The service loads the three personas, verifies the Vertex AI connection (`gemini-2.5-flash`, `us-central1`) and starts listening on port 8000.
 
-### TODO 4: Coherence Scoring (quality_validator.py)
-Build an algorithm to score logical flow and structure.
+![Server startup](./screenshots/2_server_startup.png)
 
-### TODO 5: Groundedness Scoring (quality_validator.py)
-Build an algorithm to score technical accuracy and relevance.
+### API documentation
+Swagger UI lists the analysis, validation and operational endpoints.
 
-### TODO 6: Business Analyst Persona (personas.py)
-Create a quantitative analysis expert persona.
+![Swagger UI](./screenshots/3_swagger.png)
 
-### TODO 7: Market Researcher Persona (personas.py)
-Create a competitive intelligence expert persona.
+### Legal analysis
+`POST /analyze` returns the scenario and the generated report sections, starting with the liability assessment.
 
-### TODO 8: Strategic Consultant Persona (personas.py)
-Create a strategic planning expert persona.
+![Legal analysis response](./screenshots/4_legal_analysis.png)
 
-## Getting Started
+## Running it
 
-### Prerequisites
-
-1. **Google Cloud Project** with Vertex AI API enabled
-2. **Python 3.9+**
-3. **Access to Google Cloud Console** (web interface)
-
-### Setup Instructions
-
-1. **Set up Google Cloud Project**:
-     - Creating/selecting a project
-     - Enabling APIs via Console
-     - Creating service accounts
-     - Downloading JSON keys
-   - No command-line tools needed!
-
-2. **Navigate to the starter directory**:
 ```bash
-cd project/starter
+pip install -r requirements.txt
+cp .env.example .env                     # set PROJECT_ID (a project with the Vertex AI API enabled)
+gcloud auth application-default login    # or set GOOGLE_APPLICATION_CREDENTIALS
+python test_setup.py                     # checks the Google Cloud configuration
+python main.py                           # http://localhost:8000/docs
 ```
 
-4. **Configure your environment**:
-   - Create a `.env` file (copy from `.env.example`)
-   - Add your Project ID from Google Cloud Console
-   - Place your service account JSON key in the project
-   - Update `GOOGLE_APPLICATION_CREDENTIALS` in `.env`
+Analyze a case:
 
-5. **Test your setup**:
 ```bash
-# First, test your Google Cloud configuration
-python test_setup.py
-
-# Once setup test passes, run the project tests (will fail initially)
-python tests/test_todos.py
-```
-
-## Working on the Project
-
-### Step-by-Step Approach
-
-1. **Start with TODO 1**: Get Vertex AI connection working first
-2. **Then TODOs 2-3**: Implement content generation and report assembly
-3. **Then TODOs 4-5**: Add quality validation algorithms
-4. **Finally TODOs 6-8**: Create the expert personas
-
-### Running the System
-
-1. **Start the server**:
-```bash
-python main.py
-```
-
-2. **Open the API documentation**:
-Navigate to `http://localhost:8000/docs`
-
-3. **Test with sample scenario**:
-```bash
-# POST to /analyze endpoint with test_scenarios.json data
 curl -X POST "http://localhost:8000/analyze" \
   -H "Content-Type: application/json" \
-  -d @test_scenarios.json
+  -d '{
+    "scenario": "Tech company accused of patent infringement on mobile payment processing system",
+    "context": "Defendant has prior art from 2015, plaintiff filed patent in 2018"
+  }'
 ```
 
-### Testing Your Implementation
+A six-section report takes 80 to 100 seconds and costs about $0.04 with `gemini-2.5-flash`. `GET /metrics` shows cumulative tokens, success rate and average section latency.
 
-Run tests for specific TODOs:
+## Tests
+
 ```bash
-# Test all TODOs
-python tests/test_todos.py
-
-# Test specific TODO (example)
-python -m unittest tests.test_todos.TestTODO1_VertexAIInitialization
+python tests/test_legal_intelligence.py
 ```
 
-## Tips for Success
-
-### For TODO 1 (Vertex AI)
-- Use `vertexai.init(project=..., location=...)`
-- Create `GenerativeModel(model_name)`
-- Test with a simple prompt
-- Handle exceptions gracefully
-
-### For TODO 2 (Content Generation)
-- Build prompt with `self._build_prompt()`
-- Use `self.model.generate_content()`
-- Implement retry with exponential backoff
-- Track tokens from `response.usage_metadata`
-
-### For TODO 3 (Complete Report)
-- Define section sequence with personas
-- Pass previous sections for context
-- Validate quality and retry if needed
-- Assemble all sections into report
-
-### For TODOs 4-5 (Quality Scoring)
-- Score from 0.0 to 1.0
-- Check multiple quality indicators
-- Weight different components
-- Return combined score
-
-### For TODOs 6-8 (Personas)
-- Minimum 150 words each
-- Include role, expertise, style, frameworks
-- Make them distinct and specialized
-- Focus on legal/business expertise
-
-## Validation Checklist
-
-Before submitting, ensure:
-
-- [ ] All tests pass (`python tests/test_todos.py`)
-- [ ] Server starts without errors
-- [ ] Can generate reports via API
-- [ ] Quality scores are > 0.7
-- [ ] Each persona is distinct and complete
-
-## Common Issues
-
-### "PROJECT_ID not set"
-- Check your `.env` file has `PROJECT_ID=your-project-id`
-- Make sure `.env` is in the correct directory
-- Verify the project ID matches your Google Cloud Console
-
-### "Not authenticated"
-- Ensure your service account JSON key file exists
-- Check `GOOGLE_APPLICATION_CREDENTIALS` path in `.env`
-- Verify the service account has proper roles (Vertex AI User)
-- Run `python test_setup.py` to diagnose authentication issues
-
-### "Vertex AI not enabled"
-- Go to Google Cloud Console → APIs & Services
-- Search for "Vertex AI API" and click Enable
-- Wait 2-3 minutes for the API to activate
-- Also enable Cloud Storage and Logging APIs
-
-### Tests failing
-- Start with TODO 1 and work sequentially
-- Check test output for specific failure reasons
-- Ensure all dependencies are installed
-- Run `python test_setup.py` first to verify setup
-
-## Resources
-
-- [Vertex AI Documentation](https://cloud.google.com/vertex-ai/docs)
-- [Gemini API Reference](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini)
-- [FastAPI Documentation](https://fastapi.tiangolo.com/)
-
-## Support
-
-If you get stuck:
-1. Review the test file for hints
-2. Check the error messages carefully
-3. Refer to the course exercises for similar patterns
-4. Remember: The infrastructure works, you're just adding the intelligence!
-
-Good luck, Lead AI Architect! 🚀
+Run the tests without `PROJECT_ID` exported in the shell: `test_initialization_failure_handling` expects initialization to fail when no project is configured.

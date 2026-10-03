@@ -377,11 +377,8 @@ def create_research_loop_agent(model: str = "gemini-2.0-flash",
     Returns:
         LoopAgent configured for research refinement
     """
-    # TODO 1: Create the two agents for the LoopAgent
-    #
-    # Create the generator and validator agents:
-    # - ResearcherAgent: The generator that creates/improves answers
-    # - ResearchCriticAgent: The validator that evaluates quality
+    # Generator (ResearcherAgent) drafts and improves the answer; validator
+    # (ResearchCriticAgent) scores it and escalates once it meets the threshold.
 
     researcher = ResearcherAgent(model=model)
     critic = ResearchCriticAgent(model=model)
@@ -390,10 +387,8 @@ def create_research_loop_agent(model: str = "gemini-2.0-flash",
         researcher.client = client
         critic.client = client
 
-    # TODO 2: Compose agents into LoopAgent
-    #
-    # Create a LoopAgent that will run the researcher and critic iteratively.
-    #
+    # LoopAgent alternates researcher and critic until the critic escalates or
+    # max_iterations is reached.
 
     refinement_loop = LoopAgent(
         name="research_refinement_loop",
